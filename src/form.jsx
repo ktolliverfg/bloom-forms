@@ -56,33 +56,19 @@ export class Form extends React.Component {
 
   static mapDispatchToProps(dispatch, ownProps) {
     return {
-      checkForVisibleFields: (formId = ownProps.id) => {
-        dispatch(checkForVisibleFields(formId))
-      },
-      updateVisibleFieldsArr: (formId = ownProps.id, fieldNames) => {
-        dispatch(updateVisibleFieldsArr(formId, fieldNames))
-      },
-      onFocus: (formId = ownProps.id, fieldName) => {
-        dispatch(onFocus(formId, fieldName))
-      },
-      updateDirtyFieldsArr: (formId = ownProps.id, fieldName) => {
-        dispatch(updateDirtyFieldsArr(formId, fieldName))
-      },
-      addFormError: (formId = ownProps.id, fieldName, errorMessage) => {
-        dispatch(addFormError(formId, fieldName, errorMessage))
-      },
-      checkCompleted: (formId = ownProps.id) => {
-        dispatch(checkCompleted(formId))
-      },
-      clearForm: (formId = ownProps.id) => {
-        dispatch(clearForm(formId))
-      },
-      createForm: (formId = ownProps.id, formObject) => {
-        dispatch(createForm(formId, formObject))
-      },
-      deleteFormError: (formId = ownProps.id, fieldName) => {
-        dispatch(deleteFormError(formId, fieldName))
-      },
+      addFormError: (formId = ownProps.id, fieldName, errorMessage) =>
+        dispatch(addFormError(formId, fieldName, errorMessage)),
+      checkCompleted: (formId = ownProps.id) =>
+        dispatch(checkCompleted(formId)),
+      checkForVisibleFields: (formId = ownProps.id) =>
+        dispatch(checkForVisibleFields(formId)),
+      clearForm: (formId = ownProps.id) => dispatch(clearForm(formId)),
+      createForm: (formId = ownProps.id, formObject) =>
+        dispatch(createForm(formId, formObject)),
+      deleteFormError: (formId = ownProps.id, fieldName) =>
+        dispatch(deleteFormError(formId, fieldName)),
+      onFocus: (formId = ownProps.id, fieldName) =>
+        dispatch(onFocus(formId, fieldName)),
       updateForm: (
         e = null,
         formId = ownProps.id,
@@ -100,8 +86,14 @@ export class Form extends React.Component {
             document.getElementById(fieldName) ||
             [...document.getElementsByName(fieldName)][0]
           ).getAttribute('type')
-        dispatch(updateForm(e, formId, fieldName, optValue, type, optMultiple))
-      }
+        return dispatch(
+          updateForm(e, formId, fieldName, optValue, type, optMultiple)
+        )
+      },
+      updateDirtyFieldsArr: (formId = ownProps.id, fieldName) =>
+        dispatch(updateDirtyFieldsArr(formId, fieldName)),
+      updateVisibleFieldsArr: (formId = ownProps.id, fieldNames) =>
+        dispatch(updateVisibleFieldsArr(formId, fieldNames))
     }
   }
 
@@ -112,6 +104,7 @@ export class Form extends React.Component {
   }
 
   checkField = async (e, elem = null) => {
+    // make sure we have all the values we need
     const field = elem && elem.getAttribute ? elem : e.target
     const fieldName = field.getAttribute('name')
     const fieldValue = field.value.trim()
@@ -119,6 +112,7 @@ export class Form extends React.Component {
       field.getAttribute('aria-required') || field.getAttribute('required')
 
     try {
+      // use the validator to find the status of all fields
       const fieldStatus = await validator(
         {
           [fieldName]: {
@@ -132,9 +126,9 @@ export class Form extends React.Component {
           : null,
         this.props.validationHelp ? this.props.validationHelp.dictionary : null
       )
-      const allowNull = !isRequired || (fieldValue && isRequired)
+      const allowDeletion = !isRequired || (fieldValue && isRequired)
 
-      if (fieldStatus.isValid && allowNull) {
+      if (fieldStatus.isValid && allowDeletion) {
         this.props.deleteFormError(this.props.id, fieldName)
         return Promise.resolve(true)
       } else {
@@ -221,17 +215,15 @@ export class Form extends React.Component {
     }
 
     Promise.all(checkArr)
-      .then(() => {
-        if (thisForm && this.props.forms[this.props.id].isValid) {
+      .then(isValidValues => {
+        if ((isValidValues || []).reduce((a, b) => a && b)) {
           const successCallback = () => {
             this.setState({
               processingRequest: false
             })
           }
 
-          const failCallback = err => {
-            // let message = err.response ? err.response.data.error.message : err
-            console.log({ ...err })
+          const failCallback = () => {
             this.setState({
               processingRequest: false
             })
@@ -371,7 +363,7 @@ export class Form extends React.Component {
     this.getVisibleInputs(this.props.id)
 
     if (this.props.submitRoute) {
-      console.log(
+      console.error(
         `%c You're using "submitRoute" in form ${
           this.props.id
         }, which comes from a pre-release version of Bloom Forms. Please use "submitForm".`,
