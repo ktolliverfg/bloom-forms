@@ -144,7 +144,8 @@ export class Form extends React.Component {
     }
   };
 
-  processFormDataForSubmit = thisForm => {
+  processFormDataForSubmit = originalForm => {
+    const thisForm = { ...originalForm }
     for (let field in thisForm) {
       if (
         thisForm[field].value ||
@@ -204,9 +205,10 @@ export class Form extends React.Component {
     const checkArr = []
     for (let field in thisForm) {
       if (
-        field != 'isValid' &&
-        ((thisForm[field].value || thisForm[field].value === '') &&
-          !thisForm[field].value.type) /* don't check files */ &&
+        (thisForm[field].value ||
+          thisForm[field].value === '' ||
+          thisForm[field].value === false) &&
+        !thisForm[field].value.type /* don't check files */ &&
         document.getElementById(field)
       ) {
         // validate each field in case onBlur on that field never triggered
@@ -413,15 +415,14 @@ export class Form extends React.Component {
   };
 
   render() {
-    let { submitForm, prepopulateData, ...props } = this.props
+    let { forms, submitForm, prepopulateData, ...props } = this.props
     // make sure this works if the form has one child or many
     let children = props.children
       ? Array.isArray(this.props.children)
         ? this.props.children
         : [this.props.children]
       : []
-    let thisForm =
-      props.forms && props.forms[props.id] ? props.forms[props.id] : null
+    let thisForm = forms && forms[props.id] ? forms[props.id] : null
     // clone the children to pass in custom props related to entire form
     let formChildren = children.length
       ? React.Children.map(children, child => {
