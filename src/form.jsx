@@ -51,7 +51,8 @@ export class Form extends React.Component {
     validationHelp: PropTypes.shape({
       errorLanguage: PropTypes.object,
       dictionary: PropTypes.object
-    })
+    }),
+    wrapInFormElement: PropTypes.bool
   }; // make sure only those that don't come from redux are required for better error logging to end user
 
   static mapDispatchToProps(dispatch, ownProps) {
@@ -129,15 +130,25 @@ export class Form extends React.Component {
       const allowDeletion = !isRequired || (fieldValue && isRequired)
 
       if (fieldStatus.isValid && allowDeletion) {
-        this.props.deleteFormError(this.props.id, fieldName)
-        return Promise.resolve(true)
+        if (this.props.deleteFormError) {
+          // for testing inner component without being connected to redux
+          this.props.deleteFormError(this.props.id, fieldName)
+          return Promise.resolve(true)
+        } else {
+          return Promise.resolve(true)
+        }
       } else {
-        this.props.addFormError(
-          this.props.id,
-          fieldName,
-          fieldStatus.warnings[fieldName]
-        )
-        return Promise.resolve(false)
+        if (this.props.addFormError) {
+          // for testing inner component without being connected to redux
+          this.props.addFormError(
+            this.props.id,
+            fieldName,
+            fieldStatus.warnings[fieldName]
+          )
+          return Promise.resolve(false)
+        } else {
+          return Promise.resolve(true)
+        }
       }
     } catch (err) {
       throw new Error(err)
@@ -342,16 +353,18 @@ export class Form extends React.Component {
       }
     }
 
-    props.createForm(props.id, formData)
-  };
-
-  componentWillUnmount = () => {
-    if (!this.props.preserveAfterUnmount) {
-      this.props.clearForm()
+    if (props.createForm) {
+      props.createForm(props.id, formData)
     }
   };
 
-  componentDidMount = () => {
+  componentWillUnmount() {
+    if (!this.props.preserveAfterUnmount) {
+      this.props.clearForm()
+    }
+  }
+
+  componentDidMount() {
     if (this.props.prepopulateData) {
       this.populateFields(this.props, this.props.prepopulateData)
     } else {
@@ -372,9 +385,9 @@ export class Form extends React.Component {
         'color: red'
       )
     }
-  };
+  }
 
-  componentWillReceiveProps = newProps => {
+  componentWillReceiveProps(newProps) {
     if (
       newProps.prepopulateData &&
       (!this.props.prepopulateData ||
@@ -388,18 +401,26 @@ export class Form extends React.Component {
       this.populateFields(newProps, newProps.prepopulateData)
     }
 
-    if (newProps.forms[newProps.id].checkForVisibleFields) {
+    if (
+      newProps.forms &&
+      newProps.forms[newProps.id] &&
+      newProps.forms[newProps.id].checkForVisibleInputs &&
+      newProps.forms[newProps.id].checkForVisibleFields
+    ) {
       this.getVisibleInputs(newProps.id)
     }
 
     if (
+      newProps.forms &&
+      newProps.forms[newProps.id] &&
       newProps.fieldNames.length !=
-      Object.keys(newProps.forms[newProps.id].fields).length
+        Object.keys(newProps.forms[newProps.id].fields).length
     ) {
       this.populateFields(newProps, null, newProps.forms[newProps.id].fields)
     }
 
     if (
+      newProps.forms &&
       newProps.forms[newProps.id] &&
       newProps.forms[newProps.id].awaitingCheck &&
       newProps.forms[newProps.id].awaitingCheck.length
@@ -410,9 +431,12 @@ export class Form extends React.Component {
           this.checkField(null, elem)
         }
       })
-      this.props.checkCompleted(newProps.id)
+      if (this.props.checkCompleted) {
+        // for testing inner component without being connected to redux
+        this.props.checkCompleted(newProps.id)
+      }
     }
-  };
+  }
 
   render() {
     let { forms, submitForm, prepopulateData, ...props } = this.props
@@ -447,7 +471,15 @@ export class Form extends React.Component {
         })
       : children
 
-    return <div>{formChildren}</div>
+    if (props.wrapInFormElement) {
+      return (
+        <form id={props.id} className={props.className} noValidate>
+          {formChildren}
+        </form>
+      )
+    } else {
+      return <React.Fragment>{formChildren}</React.Fragment>
+    }
   }
 }
 
