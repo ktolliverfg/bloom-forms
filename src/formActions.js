@@ -100,13 +100,7 @@ export function updateForm(
       fieldValue =
         fieldValue || (fieldValue === 0 ? fieldValue : e ? e.target.value : '')
   }
-  console.log('%c ( ͡° ͜ʖ ͡°) wait:::', 'color:tomato;font-size:30px;', {
-    type: reducerType,
-    formId,
-    fieldName,
-    fieldValue,
-    multiple
-  })
+
   return {
     type: reducerType,
     formId,
