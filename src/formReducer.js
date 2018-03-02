@@ -116,6 +116,11 @@ const formReducer = (state = {}, action) =>
       }
 
       case 'UPDATE_FORM': {
+        console.log(
+          '%c ( ͡° ͜ʖ ͡°)',
+          'color:tomato;font-size:30px;',
+          draftForms[action.formId]
+        )
         if (!draftForms[action.formId]) {
           draftForms[action.formId] = {}
         }
@@ -124,6 +129,14 @@ const formReducer = (state = {}, action) =>
         }
         if (!draftForms[action.formId].dirtyFields) {
           draftForms[action.formId].dirtyFields = []
+        }
+        if (
+          draftForms[action.formId].fields.length &&
+          !draftForms[action.formId].fields[action.fieldName]
+        ) {
+          throw new Error(
+            `${action.fieldName} does not exist on ${action.formId}`
+          )
         }
         if (
           draftForms[action.formId].dirtyFields.indexOf(action.fieldName) === -1
@@ -138,7 +151,6 @@ const formReducer = (state = {}, action) =>
         }
         draftForms[action.formId].fields[action.fieldName].value =
           action.fieldValue
-
         break
       }
 
