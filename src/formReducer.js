@@ -135,18 +135,16 @@ const formReducer = (state = {}, action) =>
         ) {
           draftForms[action.formId].dirtyFields.push(action.fieldName)
         }
-        // if (
-        //   !draftForms[action.formId].fields[action.fieldName]
-        // ) {
-        //   throw new Error(
-        //     `${action.fieldName} does not exist on ${action.formId}`
-        //   )
-        // }
         if (
           !draftForms[action.formId].fields[action.fieldName] ||
           draftForms[action.formId].fields[action.fieldName] === ''
         ) {
           draftForms[action.formId].fields[action.fieldName] = {}
+        }
+        if (!draftForms[action.formId].fields[action.fieldName]) {
+          throw new Error(
+            `${action.fieldName} does not exist on ${action.formId}`
+          )
         }
         draftForms[action.formId].fields[action.fieldName].value =
           action.fieldValue
