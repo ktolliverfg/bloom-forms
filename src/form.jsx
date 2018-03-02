@@ -29,7 +29,6 @@ export class Form extends React.Component {
 
   static propTypes = {
     addFormError: PropTypes.func,
-    ignoreFocusOnFirstElement: PropTypes.bool,
     clearForm: PropTypes.func,
     createForm: PropTypes.func,
     deleteFormError: PropTypes.func,
@@ -44,6 +43,7 @@ export class Form extends React.Component {
     ).isRequired,
     forms: PropTypes.object,
     id: PropTypes.string.isRequired,
+    ignoreFocusOnFirstElement: PropTypes.bool,
     prepopulateData: PropTypes.object,
     preserveAfterUnmount: PropTypes.bool,
     submitForm: PropTypes.func.isRequired,
@@ -52,7 +52,7 @@ export class Form extends React.Component {
       errorLanguage: PropTypes.object,
       dictionary: PropTypes.object
     })
-  }; // make sure only those that don't come from redux are declared for better error logging to end user
+  }; // make sure only those that don't come from redux are required for better error logging to end user
 
   static mapDispatchToProps(dispatch, ownProps) {
     return {
