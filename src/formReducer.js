@@ -48,6 +48,11 @@ const formReducer = (state = {}, action) =>
         draftForms[action.formId].awaitingCheck =
           action.formObject.awaitingCheck || []
         draftForms[action.formId].isValid = true
+        console.log(
+          '%c draftForms::::',
+          'color:tomato;font-size:30px;',
+          draftForms
+        )
         break
       }
 
@@ -116,11 +121,6 @@ const formReducer = (state = {}, action) =>
       }
 
       case 'UPDATE_FORM': {
-        console.log(
-          '%c ( ͡° ͜ʖ ͡°)',
-          'color:tomato;font-size:30px;',
-          draftForms[action.formId]
-        )
         if (!draftForms[action.formId]) {
           draftForms[action.formId] = {}
         }
@@ -131,18 +131,17 @@ const formReducer = (state = {}, action) =>
           draftForms[action.formId].dirtyFields = []
         }
         if (
-          draftForms[action.formId].fields.length &&
-          !draftForms[action.formId].fields[action.fieldName]
-        ) {
-          throw new Error(
-            `${action.fieldName} does not exist on ${action.formId}`
-          )
-        }
-        if (
           draftForms[action.formId].dirtyFields.indexOf(action.fieldName) === -1
         ) {
           draftForms[action.formId].dirtyFields.push(action.fieldName)
         }
+        // if (
+        //   !draftForms[action.formId].fields[action.fieldName]
+        // ) {
+        //   throw new Error(
+        //     `${action.fieldName} does not exist on ${action.formId}`
+        //   )
+        // }
         if (
           !draftForms[action.formId].fields[action.fieldName] ||
           draftForms[action.formId].fields[action.fieldName] === ''
