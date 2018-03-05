@@ -176,9 +176,7 @@ describe('<Form/>', function() {
     )
   })
 
-  it ('responds to a new awaitingCheck prop', function() {
-    // the commented out code here tried to check if checkField was properly triggered, but checkField is an arrow method
-    // and needed to be instantiated differently. Leaving code for later if there's time to fix up.
+  it ('triggers multiple checkFields when receiving awaitingCheck prop', function() {
     const initialProps = {
       fieldNames,
       id: 'example-form',
@@ -193,16 +191,10 @@ describe('<Form/>', function() {
 
     document.body.appendChild(nameElem)
     document.body.appendChild(idElem)
-
-    // const TempForm = Form
-    // Object.getOwnPropertyNames(Form.prototype).forEach(field =>
-    //   TempForm[field] = Form.prototype[field]
-    // )
-    // const formTester = new TempForm(initialProps)
     const wrapper = mount(<Form { ...initialProps } />)
 
-    const receivedPropsSpy = sinon.spy(Form.prototype, 'componentWillReceiveProps')
-    // const checkFieldSpy = sinon.spy(formTester, 'checkField')
+    const receivedPropsSpy = sinon.spy(wrapper.instance(), 'componentWillReceiveProps')
+    const checkFieldSpy = sinon.spy(wrapper.instance(), 'checkField')
 
     const updatedProps = { ...initialProps, forms: {
       'example-form': {
@@ -215,6 +207,6 @@ describe('<Form/>', function() {
     wrapper.update()
 
     assert.equal(receivedPropsSpy.calledOnce, true)
-    // assert.equal(checkFieldSpy.called, true)
+    assert.equal(checkFieldSpy.called, true)
   })
 })
