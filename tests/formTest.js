@@ -176,7 +176,9 @@ describe('<Form/>', function() {
     )
   })
 
-  it ('triggers multiple checkFields if it receives anything in awaitingCheck', function() {
+  it ('responds to a new awaitingCheck prop', function() {
+    // the commented out code here tried to check if checkField was properly triggered, but checkField is an arrow method
+    // and needed to be instantiated differently. Leaving code for later if there's time to fix up.
     const initialProps = {
       fieldNames,
       id: 'example-form',
@@ -192,19 +194,15 @@ describe('<Form/>', function() {
     document.body.appendChild(nameElem)
     document.body.appendChild(idElem)
 
-    const TempForm = Form
-    Object.getOwnPropertyNames(Form.prototype).forEach(field =>
-      TempForm[field] = Form.prototype[field]
-    )
-    const formTester = new TempForm(initialProps)
-    const wrapper = mount(<TempForm { ...initialProps } />)
+    // const TempForm = Form
+    // Object.getOwnPropertyNames(Form.prototype).forEach(field =>
+    //   TempForm[field] = Form.prototype[field]
+    // )
+    // const formTester = new TempForm(initialProps)
+    const wrapper = mount(<Form { ...initialProps } />)
 
-    console.log(Object.getOwnPropertyNames(TempForm))
-
-    const receivedPropsSpy = sinon.spy(formTester, 'componentWillReceiveProps')
-    const checkFieldSpy = sinon.spy(formTester, 'checkField')
-
-    // updater.enqueueForceUpdate(this, callback, 'forceUpdate')
+    const receivedPropsSpy = sinon.spy(Form.prototype, 'componentWillReceiveProps')
+    // const checkFieldSpy = sinon.spy(formTester, 'checkField')
 
     const updatedProps = { ...initialProps, forms: {
       'example-form': {
@@ -216,7 +214,7 @@ describe('<Form/>', function() {
     wrapper.setProps(updatedProps)
     wrapper.update()
 
-    // assert.equal(receivedPropsSpy.calledOnce, true)
+    assert.equal(receivedPropsSpy.calledOnce, true)
     // assert.equal(checkFieldSpy.called, true)
   })
 })
