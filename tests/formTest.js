@@ -1,9 +1,10 @@
 import { describe, it } from 'mocha'
-import React from 'react'
 import * as assert from 'assert'
-import Enzyme from 'enzyme'
-import { combineReducers, createStore } from 'redux'
+import React from 'react'
+import Enzyme, { mount } from 'enzyme'
 import Adapter from 'enzyme-adapter-react-16'
+import sinon from 'sinon'
+import { combineReducers, createStore } from 'redux'
 
 Enzyme.configure({ adapter: new Adapter() })
 
@@ -175,18 +176,37 @@ describe('<Form/>', function() {
     )
   })
 
-  it ('triggers multiple checkFields if it receives anything in awaitingCheck', function() {
-    // const wrapper = generateComponent(store)
-    // const newForms = {
-    //   'example-form': {
-    //     fields: { blep: '' },
-    //     awaitingCheck: [{ formId: 'example-form', fieldNames: 'blep' }]
-    //   }
-    // }
-    // wrapper.dive().instance().setProps({ ...wrapper.props(), forms: newForms })
-    // wrapper.update()
-    // const thisFormStore = wrapper.props().forms['example-form']
-    // assert.deepEqual(thisFormStore.awaitingCheck, newForms['example-form'].awaitingCheck)
+  it ('triggers multiple checkFields when receiving awaitingCheck prop', function() {
+    const initialProps = {
+      fieldNames,
+      id: 'example-form',
+      submitForm: submitProcess
+    }
 
+    // create fake elements so the dom can access them for field checking
+    const nameElem = document.createElement('input')
+    const idElem = document.createElement('input')
+    nameElem.setAttribute('id', 'name')
+    idElem.setAttribute('id', 'id')
+
+    document.body.appendChild(nameElem)
+    document.body.appendChild(idElem)
+    const wrapper = mount(<Form { ...initialProps } />)
+
+    const receivedPropsSpy = sinon.spy(wrapper.instance(), 'componentWillReceiveProps')
+    const checkFieldSpy = sinon.spy(wrapper.instance(), 'checkField')
+
+    const updatedProps = { ...initialProps, forms: {
+      'example-form': {
+        fields: {},
+        awaitingCheck: [{ formId: 'example-form', fieldNames: ['name', 'id'] }]
+      }
+    }}
+
+    wrapper.setProps(updatedProps)
+    wrapper.update()
+
+    assert.equal(receivedPropsSpy.calledOnce, true)
+    assert.equal(checkFieldSpy.called, true)
   })
 })
