@@ -220,7 +220,6 @@ export class Form extends React.Component {
     // check each field if it's not a file or 'isValid'
     const checkArr = []
     for (let field in thisForm) {
-      console.log(thisForm[field])
       if (
         (thisForm[field] ||
           thisForm[field] === '' ||
