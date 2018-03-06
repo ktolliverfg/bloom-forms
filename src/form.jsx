@@ -225,7 +225,6 @@ export class Form extends React.Component {
         (thisForm[field] ||
           thisForm[field] === '' ||
           thisForm[field] === false) &&
-        !thisForm[field].type /* don't check files */ &&
         document.getElementById(field)
       ) {
         // validate each field in case onBlur on that field never triggered
