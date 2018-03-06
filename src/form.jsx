@@ -301,7 +301,6 @@ export class Form extends React.Component {
     type = 'text',
     multi = false
   ) => {
-    console.log('%c form ', 'font-size: 30px; color: peru;', this.props)
     this.props.updateForm(null, formId, fieldName, fieldValue, type, multi)
   };
 
