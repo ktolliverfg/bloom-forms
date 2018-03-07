@@ -90,6 +90,12 @@ export class Form extends React.Component {
             document.getElementById(fieldName) ||
             [...document.getElementsByName(fieldName)][0]
           ).getAttribute('type')
+        console.log(
+          '%c ownProps.fieldNames.indexOf(fieldName)',
+          'font-size: 30px; color: peru;',
+          ownProps.fieldNames.indexOf(fieldName)
+        )
+
         if (ownProps.fieldNames.indexOf(fieldName) < 0) {
           return console.error(
             `Field Name ${fieldName} does not exist on ${ownProps.id}!`
