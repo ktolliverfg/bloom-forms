@@ -120,6 +120,8 @@ export class Form extends React.Component {
     const isRequired =
       field.getAttribute('aria-required') || field.getAttribute('required')
 
+    console.log(e ? ('checking with e: ', e) : ('checking with elem: ', elem))
+
     try {
       // use the validator to find the status of all fields
       const fieldStatus = await validator(
