@@ -90,13 +90,6 @@ export class Form extends React.Component {
             document.getElementById(fieldName) ||
             [...document.getElementsByName(fieldName)][0]
           ).getAttribute('type')
-        console.log(
-          '%c ownProps.fieldNames.indexOf(fieldName)',
-          'font-size: 30px; color: peru;',
-          ownProps.fieldNames.indexOf(fieldName),
-          '\n',
-          ownProps.fieldNames
-        )
 
         const fields = ownProps.fieldNames.map(field => {
           if (typeof field === 'object') {
