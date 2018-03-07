@@ -41,7 +41,9 @@ export async function validatorAggregator(
 
   for (let field in testDataObject) {
     let thisField = testDataObject[field]
+    console.log('loop in validation')
     if (thisField.validateAs) {
+      // multiple validateAs;
       if (thisField.validateAs.indexOf(' ') > -1) {
         for (let validateAs of thisField.validateAs.split(' ')) {
           status = await validate(
