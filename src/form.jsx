@@ -93,7 +93,9 @@ export class Form extends React.Component {
         console.log(
           '%c ownProps.fieldNames.indexOf(fieldName)',
           'font-size: 30px; color: peru;',
-          ownProps.fieldNames.indexOf(fieldName)
+          ownProps.fieldNames.indexOf(fieldName),
+          '\n',
+          ownProps.fieldNames
         )
 
         if (ownProps.fieldNames.indexOf(fieldName) < 0) {
