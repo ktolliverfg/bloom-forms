@@ -50,7 +50,7 @@ const ExampleForm = props => {
       formData && formData.toggle && !formData.toggle.value
     )
   }
-  
+
   return (
     <form id='example-form' className='Form AuthForm' noValidate>
       <h3 className='AuthForm-header'>Example Form</h3>
