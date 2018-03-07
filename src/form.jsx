@@ -98,7 +98,13 @@ export class Form extends React.Component {
           ownProps.fieldNames
         )
 
-        if (ownProps.fieldNames.indexOf(fieldName) < 0) {
+        const fields = ownProps.fieldNames.map(field => {
+          if (typeof field === 'object') {
+            return field.name
+          } else return field
+        })
+
+        if (fields.indexOf(fieldName) < 0) {
           return console.error(
             `Field Name ${fieldName} does not exist on ${ownProps.id}!`
           )
