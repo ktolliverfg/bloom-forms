@@ -63,6 +63,13 @@ class FileInput extends React.Component {
   updateText = e => {
     e.persist()
     const fileElem = document.getElementById(this.props.id)
+    console.log(
+      '%c fileElem',
+      'font-size: 30px; color: peru;',
+      fileElem.files.length
+    )
+
+    if (!fileElem.files.length) return
     let fileNames = [...fileElem.files].map(file => file.name)
     console.log('this.props.multiple', this.props.multiple)
     console.log(
