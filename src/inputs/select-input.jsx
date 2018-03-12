@@ -41,17 +41,17 @@ class SelectInput extends React.Component {
   };
 
   selectOpt = val => {
-    this.props.onChange(this.props.formId, this.props.name, val)
+    this.focusOnTypeAhead(null, true, true)
     this.setState({
       hasUsedPresentationElements: true,
       showList: false,
       sortBy: null,
       sortedOpts: this.props.options
     })
-    this.focusOnTypeAhead(null, true)
+    this.props.onChange(this.props.formId, this.props.name, val)
   };
 
-  focusOnTypeAhead = (e, override = false) => {
+  focusOnTypeAhead = (e, override = false, dontShowList = false) => {
     const typeaheadId = `${this.props.name}-placeholder`
     const allowFocus = !this.state.initialFocus || override
 
@@ -59,7 +59,7 @@ class SelectInput extends React.Component {
       document.getElementById(typeaheadId).focus()
       this.setState({
         initialFocus: true,
-        showList: true
+        showList: dontShowList ? false : true
       })
     }
   };
@@ -414,7 +414,7 @@ class SelectInput extends React.Component {
         className={`Input-label SelectInput ${containerClass || ''}`}
         id={`${name}-placeholder-label`}
         onBlur={e => this.closeOpts(e)}
-        onFocus={e => this.focusOnTypeAhead(e)}
+        onFocus={e => this.focusOnTypeAhead(e, false, !value ? false : true)}
         aria-labelledby={`${name}-label-text`}
       >
         {labelText}

@@ -1,5 +1,12 @@
 # CHANGELOG
 
+### Monday March 12, 2018 -- 1.3.3 publish
+- removing files from normal FileInput wipes file array for that element
+- Dropzone accept helper text removed unneeded '$'
+- SelectInput initial focus on regular (non-typeahead) input properly drops down on initial focus
+- SelectInput choosing option properly closes dropdown options
+- SelectInput focus on typeahead lost outline ring
+
 ### Friday March 9, 2018 -- 1.3.2 publish
 - FileInput focus and 'enter' properly triggers file browser
 - SelectInput drops down on initial focus
