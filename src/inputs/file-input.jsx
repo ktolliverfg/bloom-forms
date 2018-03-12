@@ -13,6 +13,7 @@ class FileInput extends React.Component {
 
   static propTypes = {
     accept: PropTypes.string /* file type */,
+    containerClass: PropTypes.string,
     error: PropTypes.string,
     formId: PropTypes.string.isRequired,
     label: PropTypes.string.isRequired,
@@ -51,6 +52,16 @@ class FileInput extends React.Component {
     }
   };
 
+  onKeyDown = evt => {
+    const e = evt || window.event
+    const keyCode = e.which || e.keyCode
+
+    // 13 is 'enter' key
+    if (keyCode === 13) {
+      document.getElementById(this.props.id).click()
+    }
+  };
+
   triggerInput = e => {
     const input = document.getElementById(this.props.id)
     if (e.target.getAttribute('type') === 'file') {
@@ -67,11 +78,11 @@ class FileInput extends React.Component {
     if (!fileElem.files.length) return
 
     let fileNames = [...fileElem.files].map(file => file.name)
-    console.log('this.props.multiple', this.props.multiple)
-    console.log(
-      'this.state.fileText === fileNames',
-      this.state.fileText === fileNames
-    )
+    // console.log('this.props.multiple', this.props.multiple)
+    // console.log(
+    //   'this.state.fileText === fileNames',
+    //   this.state.fileText === fileNames
+    // )
 
     if (!this.props.multiple && this.state.fileText === fileNames) {
       return
@@ -109,6 +120,7 @@ class FileInput extends React.Component {
   render = () => {
     const {
       accept,
+      containerClass,
       error,
       id,
       label,
@@ -133,10 +145,11 @@ class FileInput extends React.Component {
     return (
       <label
         htmlFor={this.props.name}
-        className='Input-label Input--file'
+        className={`Input-label Input--file ${containerClass || ''}`}
         onClick={this.triggerInput}
         id={`${name}-label`}
         onFocus={this.onFocusIn}
+        onKeyDown={this.onKeyDown}
         onBlur={this.onFocusOut}
       >
         <span className='Input--file-label-text'>
